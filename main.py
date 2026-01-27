@@ -1,6 +1,6 @@
 import os
 
-restaurantes = []
+restaurantes = ['Pizza Place', 'Sushi Bar', 'Burger Joint', 'Taco Restaurant']
 
 def exebir_nome_programa():
     print('''
@@ -12,13 +12,10 @@ def exebir_nome_programa():
 ┗━━━┻┛┗┻━━┻━━┻┛╋┗━━┻┛┗┫┏━┻┛┗━━┻━━┻━━┛
 ╋╋╋╋╋╋╋╋╋╋╋╋╋╋╋╋╋╋╋╋╋╋┃┃
 ╋╋╋╋╋╋╋╋╋╋╋╋╋╋╋╋╋╋╋╋╋╋┗┛
-      
-      Bem-vindo ao sistema de cadastro de restaurantes!
 ''')
 
 def finalizar_app():
-    os.system('cls')
-    print('Finalizando o aplicativo...\n')
+    exibir_subtitulos('Finalizando o aplicativo...')
 
 def exibir_opcoes():
     print('1 - cadastrar restaurante')
@@ -26,17 +23,36 @@ def exibir_opcoes():
     print('3 - ativar restaurante')
     print('4 - sair\n')
 
-def opcao_invalida():
-    print('Opção inválida. Tente novamente.\n')
-    input('Pressione qualquer tecla para continuar...')
+def voltar_para_menu():
+    input('Pressione qualquer tecla para voltar ao menu... ')
     main()
 
+def exibir_subtitulos(subtitulo):
+    os.system('cls')
+    print(subtitulo)
+    print()
+
+def opcao_invalida():
+    print('Opção inválida. Tente novamente.\n')
+    voltar_para_menu()
+
 def cadastrar_novo_restaurante():
-    print('Cadastrar restaurante')
-    nome = input('Digite o nome do restaurante: ')
-    restaurantes.append(nome)
-    print(f'Restaurante {nome} cadastrado com sucesso!\n')
-    return exibir_opcoes(), escolher_opcao()
+    exibir_subtitulos('Cadastrar novo restaurante')
+    nome_restaurante = input('Digite o nome do restaurante: ')
+    if nome_restaurante in restaurantes:
+        print('Restaurante já cadastrado. Tente novamente.\n')
+        input('Pressione qualquer tecla para continuar... ')
+        cadastrar_novo_restaurante()
+    else:
+        restaurantes.append(nome_restaurante)
+        print(f'Restaurante {nome_restaurante} cadastrado com sucesso!\n')
+        voltar_para_menu()
+
+def listar_restaurantes():
+    exibir_subtitulos('Listar restaurantes')
+    for restaurante in restaurantes:
+        print(f'Restaurante: {restaurante}\n')
+    voltar_para_menu()
 
 def escolher_opcao():
     opcao_escolhida = int(input('Escolha uma opção: '))
@@ -45,10 +61,7 @@ def escolher_opcao():
         if opcao_escolhida == 1:
             cadastrar_novo_restaurante()
         elif opcao_escolhida == 2:
-            print('Listar restaurante')
-            for restaurante in restaurantes:
-                print(f'Restaurante: {restaurante}\n')
-            return exibir_opcoes(), escolher_opcao()
+            listar_restaurantes()
         elif opcao_escolhida == 3:
             print('Ativar restaurante')
             nome = input('Digite o nome do restaurante a ser ativado: ')
