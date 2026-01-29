@@ -1,4 +1,10 @@
 import os
+from modelos.restaurantes import Restaurante
+
+restaurante_praca = Restaurante('Praça', 'Comida caseira')
+restaurante_juca = Restaurante('Juca Brazuca', 'Comida brasileira')
+restaurante_sushi = Restaurante('Sushi Sushiaki', 'Comida japonesa')
+restaurante_pizza = Restaurante('Pizza Lust', 'pizza')
 
 restaurantes = [{'nome': 'Pizza Place', 'categoria': 'Pizza', 'ativo': False},
                 {'nome': 'Burger King', 'categoria': 'Americana', 'ativo': False},
@@ -18,6 +24,17 @@ def exebir_nome_programa():
 ╋╋╋╋╋╋╋╋╋╋╋╋╋╋╋╋╋╋╋╋╋╋┗┛
 ''')
 
+def verificar_restaurante_existente(nome_restaurante):
+    '''verifica se o restaurante já existe'''
+    while not nome_restaurante.lower() in [restaurante._nome.lower() for restaurante in Restaurante.restaurantes]:
+        print(f'Restaurante {nome_restaurante} não encontrado.')
+        tentar_novamente = input('Tente novamente ou pressione N para voltar ao menu: ')
+        if tentar_novamente.lower() == 'n':
+            voltar_para_menu()
+        else:
+            break
+    return nome_restaurante
+
 def finalizar_app():
     '''finaliza o aplicativo'''
     exibir_subtitulos('Finalizando o aplicativo...')
@@ -27,7 +44,8 @@ def exibir_opcoes():
     print('1 - cadastrar restaurante')
     print('2 - listar restaurante')
     print('3 - Alternar status restaurante')
-    print('4 - sair\n')
+    print('4 - Avaliar restaurante')
+    print('5 - Sair\n')
 
 def voltar_para_menu():
     '''volta para o menu'''
@@ -48,24 +66,22 @@ def opcao_invalida():
     print('Opção inválida. Tente novamente.\n')
     voltar_para_menu()
 
-def alterar_status_restaurante():
-    '''altera o status do restaurante'''
-    exibir_subtitulos('Alterar status do restaurante')
-    nome_restaurante = input('Digite o nome do restaurante para alternar o status: ')
-    restaurante_encontrado = False
-    for restaurante in restaurantes:
-        if restaurante['nome'].lower() == nome_restaurante.lower():
-            restaurante_encontrado = True
-            restaurante['ativo'] = not restaurante['ativo']
-            mensagem_status = f' O restaurante {nome_restaurante} agora está {"ativo" if restaurante["ativo"] else "inativo"}.'
-            print(mensagem_status)
-    if not restaurante_encontrado:
-        print(f'Restaurante {nome_restaurante} não encontrado.')
-        tentar_novamente = input('Tentar novamente? (S/N) ')
-        if tentar_novamente.lower() == 's':
-            alterar_status_restaurante()
+# def alterar_status_restaurante():
+#     '''altera o status do restaurante'''
+#     exibir_subtitulos('Alterar status do restaurante')
+#     nome_restaurante = input('Digite o nome do restaurante que deseja avaliar: ').lower()
+#     if not nome_restaurante in [restaurante._nome.lower() for restaurante in Restaurante.restaurantes]:
+#         print(f'Restaurante {nome_restaurante} não encontrado.')
+#         tentar_novamente = input('Tente novamente ou pressione N para voltar ao menu: ')
+#         if tentar_novamente.lower() == 'n':
+#             voltar_para_menu()
+#         else:
+#             alterar_status_restaurante()
+#     else:
+#         for restaurante in Restaurante.restaurantes:
+#             if restaurante._nome.lower() == nome_restaurante:
 
-    voltar_para_menu()
+#     voltar_para_menu()
 
 def cadastrar_novo_restaurante():
     '''cadastra um novo restaurante
@@ -86,16 +102,38 @@ def cadastrar_novo_restaurante():
         print(f'Restaurante {nome_restaurante} cadastrado com sucesso!\n')
         voltar_para_menu()
 
+def avaliar_restaurante():
+    '''avalia o restaurante'''
+    exibir_subtitulos('Avaliar restaurante')
+    nome_restaurante = input('Digite o nome do restaurante que deseja avaliar: ').lower()
+    if not nome_restaurante in [restaurante._nome.lower() for restaurante in Restaurante.restaurantes]:
+        print(f'Restaurante {nome_restaurante} não encontrado.')
+        tentar_novamente = input('Tente novamente ou pressione N para voltar ao menu: ')
+        if tentar_novamente.lower() == 'n':
+            voltar_para_menu()
+        else:
+            avaliar_restaurante()
+    else:
+        for restaurante in Restaurante.restaurantes:
+            if restaurante._nome.lower() == nome_restaurante:
+                cliente = input('Digite seu nome: ')
+                while True:
+                    try:
+                        nota = float(input('Digite a nota (0 a 5): '))
+                        if nota < 0 or nota > 5:
+                            raise ValueError
+                        break
+                    except ValueError:
+                        print('Nota inválida. Digite um número entre 0 e 5.')
+                comentario = input('Digite um comentário (opcional): ')
+                restaurante.receber_avaliacao(cliente, nota, comentario)
+                print('Avaliação registrada com sucesso!')
+                voltar_para_menu()
+
 def listar_restaurantes():
     '''lista os restaurantes'''
     exibir_subtitulos('Listar restaurantes')
-    print(f'{"Restaurante".ljust(22)} | {"Categoria".ljust(22)} | Status\n')
-    for restaurante in restaurantes:
-        nome_restaurante = restaurante['nome']
-        categoria_restaurante = restaurante['categoria']
-        ativo_restaurante = 'ativado' if restaurante['ativo'] else 'desativado'
-        print(f'- {nome_restaurante.ljust(20)} | - {categoria_restaurante.ljust(20)} | {ativo_restaurante}')
-    print()
+    Restaurante.listar_restaurantes()
     voltar_para_menu()
 
 def escolher_opcao():
@@ -110,6 +148,8 @@ def escolher_opcao():
         elif opcao_escolhida == 3:
             alterar_status_restaurante()
         elif opcao_escolhida == 4:
+            avaliar_restaurante()
+        elif opcao_escolhida == 5:
             finalizar_app()
         else:
             opcao_invalida()   
