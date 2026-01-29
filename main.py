@@ -82,6 +82,9 @@ def cadastrar_novo_restaurante():
     '''
     exibir_subtitulos('Cadastrar novo restaurante')
     nome_restaurante = input('Digite o nome do restaurante: ')
+    while nome_restaurante == '':
+        print('O nome do restaurante não pode ser vazio. Tente novamente.\n')
+        nome_restaurante = input('Digite o nome do restaurante: ')
     if nome_restaurante.lower() in [restaurante._nome.lower() for restaurante in Restaurante.restaurantes]:
         print('Restaurante já cadastrado. Tente novamente.\n')
         input('Pressione qualquer tecla para continuar... ')
@@ -89,8 +92,8 @@ def cadastrar_novo_restaurante():
     else:
         categoria_restaurante = input(f'Digite a categoria do restaurante {nome_restaurante}: ')
         while categoria_restaurante == '':
-            categoria_restaurante = input(f'Digite a categoria do restaurante {nome_restaurante}: ')
             print('A categoria do restaurante não pode ser vazia. Tente novamente.\n')
+            categoria_restaurante = input(f'Digite a categoria do restaurante {nome_restaurante}: ')
         dados_restaurante = Restaurante(nome_restaurante, categoria_restaurante)
         restaurantes.append(dados_restaurante)
         print(f'Restaurante {nome_restaurante} cadastrado com sucesso!\n')
